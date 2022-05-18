@@ -1,0 +1,14 @@
+#terraform
+.terraform
+terraform.tfstate*
+*.iml
+.DS_Store
+tf-env/dev/.terraform*
+tf-env/dev/.terragrunt*
+
+# java
+target
+
+#vscode
+.vscode
+WorkSpaces.code-workspace

@@ -1,0 +1,18 @@
+<configuration>
+  <appender name="JSON_TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <destination>intake.logs.datadoghq.com:10516</destination>
+    <keepAliveDuration>20 seconds</keepAliveDuration>
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+        <prefix class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${DD_API_KEY} %mdc{keyThatDoesNotExist}</pattern>
+            </layout>
+          </prefix>
+    </encoder>
+    <ssl />
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="JSON_TCP" />
+  </root>
+</configuration>

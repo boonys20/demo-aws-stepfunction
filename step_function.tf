@@ -44,13 +44,9 @@ resource "aws_sfn_state_machine" "main-workflow" {
 }
 EOF
 
- tags = {
-    "env" = "ccoe-poc",
-    "service" = "lambda",
-    "version" = 1
- }
-
- logging_configuration {
+  tags = var.env_tags
+  
+  logging_configuration {
     log_destination        = "${aws_cloudwatch_log_group.std.arn}:*"
     include_execution_data = true
     level                  = "ALL"
@@ -58,13 +54,8 @@ EOF
 
 }
 
-
 resource "aws_cloudwatch_log_group" "std" {
   name = "std-log-lambda"
 
-  tags = {
-    "env" = "ccoe-poc",
-    "service" = "lambda",
-    "version" = 1
- }
+  tags = var.env_tags
 }

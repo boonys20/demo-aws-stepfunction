@@ -1,7 +1,7 @@
 variable "sns_topic" {
   description = "name of sns topic"
   type        = string
-  default     = ""
+  default     = "change me"
 }
 
 variable "environment_prefix" {
@@ -23,10 +23,24 @@ variable "api_key" {
 
 variable "jar_file" {
   description = "source of lambda code"
+  type        = string
   default     = "demo-aws-stepfunction-1.0.0-SNAPSHOT.jar"
 }
 
 variable "zip_file" {
   description = "source of lambda code"
+  type        = string
   default     = "demo-aws-stepfunction-1.0.0-SNAPSHOT.zip"
+}
+
+variable "env_tags" {
+  description = "tags of lambda"
+  type = any
+  default = {}
+}
+
+variable "lambda_envs" {
+  description = "envs of lambda"
+  type = any
+  default = {}
 }

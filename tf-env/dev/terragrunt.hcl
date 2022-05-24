@@ -25,5 +25,6 @@ locals {
 }
 
 inputs = {
-  
+  env_tags = local.env.env_tags
+  lambda_envs = local.env.lambda_envs
 }

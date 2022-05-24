@@ -18,7 +18,12 @@ resource "aws_iam_policy" "lambda_logging" {
             "iam:ListRoles",
             "iam:ListInstanceProfiles",
             "iam:PassRole",
-            "cloudwatch:GetMetricStatistics"
+            "cloudwatch:GetMetricStatistics",
+            "xray:PutTraceSegments",
+            "xray:PutTelemetryRecords",
+            "xray:GetSamplingRules",
+            "xray:GetSamplingTargets",
+            "xray:GetSamplingStatisticSummaries"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -62,22 +67,20 @@ resource "aws_lambda_function" "step-validate" {
   memory_size      = 512
   timeout          = 300
 
+  layers = ["arn:aws:lambda:${var.region}:464622532012:layer:dd-trace-java:4"]
+
   environment {
-    variables = {
-      sns_topic = "${var.sns_topic}",
-      DD_JMXFETCH_ENABLED = false,
-      DD_TRACE_ENABLED = true,
-      DD_LOGS_INJECTION = true
-      DD_SITE = "https://app.datadoghq.com",
-      DD_API_KEY = var.api_key
-    }
+    variables = merge(
+      {sns_topic = var.sns_topic},
+      {DD_API_KEY = var.api_key},
+      var.lambda_envs)
   }
 
-  tags = {
-    "env" = "ccoe-poc",
-    "service" = "lambda",
-    "version" = 1
+  tracing_config {
+    mode = "Active"
   }
+
+  tags = var.env_tags
 }
 
 resource "aws_lambda_function" "step-process" {
@@ -90,22 +93,20 @@ resource "aws_lambda_function" "step-process" {
   memory_size      = 512
   timeout          = 300
 
+  layers = ["arn:aws:lambda:${var.region}:464622532012:layer:dd-trace-java:4"]
+
   environment {
-    variables = {
-      sns_topic = "${var.sns_topic}",
-      DD_JMXFETCH_ENABLED = false,
-      DD_TRACE_ENABLED = true,
-      DD_LOGS_INJECTION = true
-      DD_SITE = "https://app.datadoghq.com",
-      DD_API_KEY =  var.api_key
-    }
+    variables = merge(
+      {sns_topic = var.sns_topic},
+      {DD_API_KEY = var.api_key},
+      var.lambda_envs)
   }
 
-  tags = {
-    "env" = "ccoe-poc",
-    "service" = "lambda",
-    "version" = 1
+  tracing_config {
+    mode = "Active"
   }
+
+  tags = var.env_tags
 }
 
 resource "aws_lambda_function" "step-exception" {
@@ -119,20 +120,18 @@ resource "aws_lambda_function" "step-exception" {
   memory_size      = 512
   timeout          = 300
 
+  layers = ["arn:aws:lambda:${var.region}:464622532012:layer:dd-trace-java:4"]
+
   environment {
-    variables = {
-      sns_topic = "${var.sns_topic}",
-      DD_JMXFETCH_ENABLED = false,
-      DD_TRACE_ENABLED = true,
-      DD_LOGS_INJECTION = true
-      DD_SITE = "https://app.datadoghq.com",
-      DD_API_KEY =  var.api_key
-    }
+    variables = merge(
+      {sns_topic = var.sns_topic},
+      {DD_API_KEY = var.api_key},
+      var.lambda_envs)
   }
 
-  tags = {
-    "env" = "ccoe-poc",
-    "service" = "aws.lambda",
-    "version" = 1
+  tracing_config {
+    mode = "Active"
   }
+
+  tags = var.env_tags
 }
